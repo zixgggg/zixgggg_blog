@@ -19,6 +19,7 @@ SITELOGO="/images/maokai_avatar.jpg"
 # Blogroll
 LINKS = (
     ("about me", "/about-me.html#about-me"),
+    ("email:zixzix035@gmail.com","#"),
     ("github", "https://github.com/zixgggg"),
     ("ig", "https://www.instagram.com/zixgggg/"),
 )
