@@ -18,7 +18,7 @@ THEME="Flex"
 SITELOGO="/images/maokai_avatar.jpg"
 # Blogroll
 LINKS = (
-    ("about me", "http://127.0.0.1:8000/about-me.html#about-me"),
+    ("about me", "/about-me.html#about-me"),
     ("github", "https://github.com/zixgggg"),
     ("ig", "https://www.instagram.com/zixgggg/"),
 )
