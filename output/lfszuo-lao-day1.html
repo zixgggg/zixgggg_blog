@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="zh_tw">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="" />
+
+  <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,700;1,400&family=Source+Sans+Pro:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="/theme/stylesheet/style.min.css">
+
+
+    <link id="pygments-light-theme" rel="stylesheet" type="text/css"
+          href="/theme/pygments/github.min.css">
+
+
+
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/fontawesome.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/brands.css">
+  <link rel="stylesheet" type="text/css" href="/theme/font-awesome/css/solid.css">
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+<meta name="author" content="zixgggg" />
+<meta name="description" content="我想做一個極簡的獨立linux發行版 所以決定開始 ~~坐大牢~~ 實踐 我選擇開一個虛擬機(debian)做 因為怕會汙染主機 尤其是他要切硬碟的 …" />
+<meta name="keywords" content="LFS, linux">
+
+
+  <meta property="og:site_name" content="zixgggg blog"/>
+  <meta property="og:title" content="LFS坐牢day1"/>
+  <meta property="og:description" content="我想做一個極簡的獨立linux發行版 所以決定開始 ~~坐大牢~~ 實踐 我選擇開一個虛擬機(debian)做 因為怕會汙染主機 尤其是他要切硬碟的 …"/>
+  <meta property="og:locale" content="en_US"/>
+  <meta property="og:url" content="/lfszuo-lao-day1.html"/>
+  <meta property="og:type" content="article"/>
+  <meta property="article:published_time" content="2026-03-09 18:04:00+08:00"/>
+  <meta property="article:modified_time" content=""/>
+  <meta property="article:author" content="/author/zixgggg.html">
+  <meta property="article:section" content="LFS"/>
+  <meta property="article:tag" content="LFS"/>
+  <meta property="article:tag" content="linux"/>
+  <meta property="og:image" content="/images/maokai_avatar.jpg">
+
+  <title>zixgggg blog &ndash; LFS坐牢day1</title>
+
+
+</head>
+<body class="light-theme">
+
+<aside>
+  <div>
+    <a href="/">
+      <img src="/images/maokai_avatar.jpg" alt="" title="">
+    </a>
+
+    <h1>
+      <a href="/"></a>
+    </h1>
+
+
+
+    <nav>
+      <ul class="list">
+
+
+
+          <li>
+            <a target="_self" href="/about-me.html#about-me" >about me</a>
+          </li>
+          <li>
+            <a target="_self" href="#" >email:zixzix035@gmail.com</a>
+          </li>
+          <li>
+            <a target="_self" href="https://github.com/zixgggg" >github</a>
+          </li>
+          <li>
+            <a target="_self" href="https://www.instagram.com/zixgggg/" >ig</a>
+          </li>
+      </ul>
+    </nav>
+
+    <ul class="social">
+      <li>
+        <a class="sc-You can add links in your config file"
+           href="#"
+           target="_blank">
+          <i class="fa-brands fa-You can add links in your config file"></i>
+        </a>
+      </li>
+      <li>
+        <a class="sc-Another social link"
+           href="#"
+           target="_blank">
+          <i class="fa-brands fa-Another social link"></i>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</aside>
+  <main>
+
+
+<article class="single">
+  <header>
+      
+    <h1 id="lfszuo-lao-day1">LFS坐牢day1</h1>
+    <p>
+      Posted on 一 09 三月 2026 in <a href="/category/lfs.html">LFS</a>
+
+    </p>
+  </header>
+
+
+  <div>
+    <p>我想做一個極簡的獨立linux發行版 所以決定開始 ~~坐大牢~~ 實踐<br>
+我選擇開一個虛擬機(debian)做 因為怕會汙染主機 尤其是他要切硬碟的部分<br>
+今天做2.2的部分 因為前面都是序言和概述所以快速瀏覽了一下<br></p>
+<p>2.2有一個腳本要執行 檢查必須要有的工具<br></p>
+<div class="highlight"><pre><span></span><code>cat<span class="w"> </span>&gt;<span class="w"> </span>version-check.sh<span class="w"> </span>&lt;&lt;<span class="w"> </span><span class="s2">&quot;EOF&quot;</span>
+<span class="c1">#!/bin/bash</span>
+<span class="c1"># A script to list version numbers of critical development tools</span>
+
+<span class="c1"># If you have tools installed in other directories, adjust PATH here AND</span>
+<span class="c1"># in ~lfs/.bashrc (section 4.4) as well.</span>
+
+<span class="nv">LC_ALL</span><span class="o">=</span>C<span class="w"> </span>
+<span class="nv">PATH</span><span class="o">=</span>/usr/bin:/bin
+
+bail<span class="o">()</span><span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FATAL: </span><span class="nv">$1</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span><span class="o">}</span>
+grep<span class="w"> </span>--version<span class="w"> </span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="m">2</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>bail<span class="w"> </span><span class="s2">&quot;grep does not work&quot;</span>
+sed<span class="w"> </span><span class="s1">&#39;&#39;</span><span class="w"> </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>bail<span class="w"> </span><span class="s2">&quot;sed does not work&quot;</span>
+sort<span class="w">   </span>/dev/null<span class="w"> </span><span class="o">||</span><span class="w"> </span>bail<span class="w"> </span><span class="s2">&quot;sort does not work&quot;</span>
+
+ver_check<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span>!<span class="w"> </span><span class="nb">type</span><span class="w"> </span>-p<span class="w"> </span><span class="nv">$2</span><span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null
+<span class="w">   </span><span class="k">then</span><span class="w"> </span>
+<span class="w">     </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: Cannot find </span><span class="nv">$2</span><span class="s2"> (</span><span class="nv">$1</span><span class="s2">)&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span>
+<span class="w">   </span><span class="k">fi</span>
+<span class="w">   </span><span class="nv">v</span><span class="o">=</span><span class="k">$(</span><span class="nv">$2</span><span class="w"> </span>--version<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;[0-9]+\.[0-9\.]+[a-z]*&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n1<span class="k">)</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;%s\n&#39;</span><span class="w"> </span><span class="nv">$3</span><span class="w"> </span><span class="nv">$v</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>--version-sort<span class="w"> </span>--check<span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null
+<span class="w">   </span><span class="k">then</span><span class="w"> </span>
+<span class="w">     </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;OK:    %-9s %-6s &gt;= </span><span class="nv">$3</span><span class="s2">\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$v</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span><span class="w"> </span>
+<span class="w">     </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;ERROR: %-9s is TOO OLD (</span><span class="nv">$3</span><span class="s2"> or later required)\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span>
+<span class="w">   </span><span class="k">fi</span>
+<span class="o">}</span>
+
+ver_kernel<span class="o">()</span>
+<span class="o">{</span>
+<span class="w">   </span><span class="nv">kver</span><span class="o">=</span><span class="k">$(</span>uname<span class="w"> </span>-r<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span>-o<span class="w"> </span><span class="s1">&#39;^[0-9\.]+&#39;</span><span class="k">)</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s1">&#39;%s\n&#39;</span><span class="w"> </span><span class="nv">$1</span><span class="w"> </span><span class="nv">$kver</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span>--version-sort<span class="w"> </span>--check<span class="w"> </span><span class="p">&amp;</span>&gt;/dev/null
+<span class="w">   </span><span class="k">then</span><span class="w"> </span>
+<span class="w">     </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;OK:    Linux Kernel </span><span class="nv">$kver</span><span class="s2"> &gt;= </span><span class="nv">$1</span><span class="s2">\n&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="m">0</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span><span class="w"> </span>
+<span class="w">     </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;ERROR: Linux Kernel (</span><span class="nv">$kver</span><span class="s2">) is TOO OLD (</span><span class="nv">$1</span><span class="s2"> or later required)\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$kver</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span>
+<span class="w">     </span><span class="k">return</span><span class="w"> </span><span class="m">1</span><span class="p">;</span><span class="w"> </span>
+<span class="w">   </span><span class="k">fi</span>
+<span class="o">}</span>
+
+<span class="c1"># Coreutils first because --version-sort needs Coreutils &gt;= 7.0</span>
+ver_check<span class="w"> </span>Coreutils<span class="w">      </span>sort<span class="w">     </span><span class="m">8</span>.1<span class="w"> </span><span class="o">||</span><span class="w"> </span>bail<span class="w"> </span><span class="s2">&quot;Coreutils too old, stop&quot;</span>
+ver_check<span class="w"> </span>Bash<span class="w">           </span>bash<span class="w">     </span><span class="m">3</span>.2
+ver_check<span class="w"> </span>Binutils<span class="w">       </span>ld<span class="w">       </span><span class="m">2</span>.13.1
+ver_check<span class="w"> </span>Bison<span class="w">          </span>bison<span class="w">    </span><span class="m">2</span>.7
+ver_check<span class="w"> </span>Diffutils<span class="w">      </span>diff<span class="w">     </span><span class="m">2</span>.8.1
+ver_check<span class="w"> </span>Findutils<span class="w">      </span>find<span class="w">     </span><span class="m">4</span>.2.31
+ver_check<span class="w"> </span>Gawk<span class="w">           </span>gawk<span class="w">     </span><span class="m">4</span>.0.1
+ver_check<span class="w"> </span>GCC<span class="w">            </span>gcc<span class="w">      </span><span class="m">5</span>.4
+ver_check<span class="w"> </span><span class="s2">&quot;GCC (C++)&quot;</span><span class="w">    </span>g++<span class="w">      </span><span class="m">5</span>.4
+ver_check<span class="w"> </span>Grep<span class="w">           </span>grep<span class="w">     </span><span class="m">2</span>.5.1a
+ver_check<span class="w"> </span>Gzip<span class="w">           </span>gzip<span class="w">     </span><span class="m">1</span>.3.12
+ver_check<span class="w"> </span>M4<span class="w">             </span>m4<span class="w">       </span><span class="m">1</span>.4.10
+ver_check<span class="w"> </span>Make<span class="w">           </span>make<span class="w">     </span><span class="m">4</span>.0
+ver_check<span class="w"> </span>Patch<span class="w">          </span>patch<span class="w">    </span><span class="m">2</span>.5.4
+ver_check<span class="w"> </span>Perl<span class="w">           </span>perl<span class="w">     </span><span class="m">5</span>.8.8
+ver_check<span class="w"> </span>Python<span class="w">         </span>python3<span class="w">  </span><span class="m">3</span>.4
+ver_check<span class="w"> </span>Sed<span class="w">            </span>sed<span class="w">      </span><span class="m">4</span>.1.5
+ver_check<span class="w"> </span>Tar<span class="w">            </span>tar<span class="w">      </span><span class="m">1</span>.22
+ver_check<span class="w"> </span>Texinfo<span class="w">        </span>texi2any<span class="w"> </span><span class="m">5</span>.0
+ver_check<span class="w"> </span>Xz<span class="w">             </span>xz<span class="w">       </span><span class="m">5</span>.0.0
+ver_kernel<span class="w"> </span><span class="m">5</span>.4
+
+<span class="k">if</span><span class="w"> </span>mount<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-q<span class="w"> </span><span class="s1">&#39;devpts on /dev/pts&#39;</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>-e<span class="w"> </span>/dev/ptmx<span class="w"> </span><span class="o">]</span>
+<span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK:    Linux Kernel supports UNIX 98 PTY&quot;</span><span class="p">;</span>
+<span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: Linux Kernel does NOT support UNIX 98 PTY&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+
+alias_check<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="nv">$1</span><span class="w"> </span>--version<span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-qi<span class="w"> </span><span class="nv">$2</span>
+<span class="w">   </span><span class="k">then</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;OK:    %-4s is </span><span class="nv">$2</span><span class="s2">\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;ERROR: %-4s is NOT </span><span class="nv">$2</span><span class="s2">\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+<span class="o">}</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Aliases:&quot;</span>
+alias_check<span class="w"> </span>awk<span class="w"> </span>GNU
+alias_check<span class="w"> </span>yacc<span class="w"> </span>Bison
+alias_check<span class="w"> </span>sh<span class="w"> </span>Bash
+
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Compiler check:&quot;</span>
+<span class="k">if</span><span class="w"> </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;int main(){}&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>g++<span class="w"> </span>-x<span class="w"> </span>c++<span class="w"> </span>-
+<span class="k">then</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK:    g++ works&quot;</span><span class="p">;</span>
+<span class="k">else</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: g++ does NOT work&quot;</span><span class="p">;</span><span class="w"> </span><span class="k">fi</span>
+rm<span class="w"> </span>-f<span class="w"> </span>a.out
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>nproc<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;ERROR: nproc is not available or it produces empty output&quot;</span>
+<span class="k">else</span>
+<span class="w">   </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;OK: nproc reports </span><span class="k">$(</span>nproc<span class="k">)</span><span class="s2"> logical cores are available&quot;</span>
+<span class="k">fi</span>
+EOF
+
+bash<span class="w"> </span>version-check.sh
+</code></pre></div>
+  </div>
+  <div class="tag-cloud">
+    <p>
+      <a href="/tag/lfs.html">LFS</a>
+      <a href="/tag/linux.html">linux</a>
+    </p>
+  </div>
+
+
+
+
+
+
+
+</article>
+
+<footer>
+<p>&copy;  </p>
+<p>
+Built with <a href="http://getpelican.com" target="_blank">Pelican</a> using <a href="http://bit.ly/flex-pelican" target="_blank">Flex</a> theme
+</p></footer>  </main>
+
+<script type="application/ld+json">
+{
+  "@context" : "http://schema.org",
+  "@type" : "Blog",
+  "name": " zixgggg blog ",
+  "url" : "",
+  "image": "/images/maokai_avatar.jpg",
+  "description": ""
+}
+</script>
+</body>
+</html>
